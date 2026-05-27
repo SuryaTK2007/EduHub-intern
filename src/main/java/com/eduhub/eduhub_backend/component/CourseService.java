@@ -36,4 +36,12 @@ public class CourseService {
     public void deleteCourse(int id) {
         courseRepository.deleteById(id);
     }
+
+    public List<Course> searchByTitle(String title) {
+        return courseRepository.findByTitleContainingIgnoreCase(title);
+    }
+
+    public List<Course> searchByInstructor(String instructor) {
+        return courseRepository.findByInstructorContainingIgnoreCase(instructor);
+    }
 }

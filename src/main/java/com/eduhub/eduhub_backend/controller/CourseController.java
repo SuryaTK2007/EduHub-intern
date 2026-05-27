@@ -41,6 +41,15 @@ public class CourseController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<List<Course>> searchCourses(
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) String instructor) {
+        if (title != null) return ResponseEntity.ok(courseService.searchByTitle(title));
+        if (instructor != null) return ResponseEntity.ok(courseService.searchByInstructor(instructor));
+        return ResponseEntity.badRequest().build();
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCourse(@PathVariable int id) {
         return courseService.getCourseById(id)
