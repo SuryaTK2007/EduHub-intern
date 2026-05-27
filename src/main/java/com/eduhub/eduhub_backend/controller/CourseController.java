@@ -2,6 +2,7 @@ package com.eduhub.eduhub_backend.controller;
 
 import com.eduhub.eduhub_backend.component.CourseService;
 import com.eduhub.eduhub_backend.model.Course;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,22 +24,8 @@ public class CourseController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Course> getCourseById(@PathVariable int id) {
-        return courseService.getCourseById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
-
-    @PostMapping
-    public Course addCourse(@RequestBody Course course) {
-        return courseService.addCourse(course);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<Course> updateCourse(@PathVariable int id, @RequestBody Course course) {
-        return courseService.getCourseById(id)
-                .map(existing -> ResponseEntity.ok(courseService.updateCourse(id, course)))
-                .orElse(ResponseEntity.notFound().build());
+    public Course getCourseById(@PathVariable int id) {
+        return courseService.getCourseById(id).get();
     }
 
     @GetMapping("/search")
@@ -50,10 +37,20 @@ public class CourseController {
         return ResponseEntity.badRequest().build();
     }
 
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public Course addCourse(@RequestBody Course course) {
+        return courseService.addCourse(course);
+    }
+
+    @PutMapping("/{id}")
+    public Course updateCourse(@PathVariable int id, @RequestBody Course course) {
+        return courseService.updateCourse(id, course);
+    }
+
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCourse(@PathVariable int id) {
-        return courseService.getCourseById(id)
-                .map(existing -> { courseService.deleteCourse(id); return ResponseEntity.noContent().<Void>build(); })
-                .orElse(ResponseEntity.notFound().build());
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteCourse(@PathVariable int id) {
+        courseService.deleteCourse(id);
     }
 }

@@ -2,7 +2,7 @@ package com.eduhub.eduhub_backend.controller;
 
 import com.eduhub.eduhub_backend.component.StudentService;
 import com.eduhub.eduhub_backend.model.Student;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,28 +23,24 @@ public class StudentController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Student> getStudentById(@PathVariable int id) {
-        return studentService.getStudentById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public Student getStudentById(@PathVariable int id) {
+        return studentService.getStudentById(id).get();
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public Student addStudent(@RequestBody Student student) {
         return studentService.addStudent(student);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Student> updateStudent(@PathVariable int id, @RequestBody Student student) {
-        return studentService.getStudentById(id)
-                .map(existing -> ResponseEntity.ok(studentService.updateStudent(id, student)))
-                .orElse(ResponseEntity.notFound().build());
+    public Student updateStudent(@PathVariable int id, @RequestBody Student student) {
+        return studentService.updateStudent(id, student);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteStudent(@PathVariable int id) {
-        return studentService.getStudentById(id)
-                .map(existing -> { studentService.deleteStudent(id); return ResponseEntity.noContent().<Void>build(); })
-                .orElse(ResponseEntity.notFound().build());
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteStudent(@PathVariable int id) {
+        studentService.deleteStudent(id);
     }
 }
