@@ -5,6 +5,7 @@ import com.eduhub.eduhub_backend.repository.CourseRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class CourseService {
@@ -19,7 +20,20 @@ public class CourseService {
         return courseRepository.findAll();
     }
 
+    public Optional<Course> getCourseById(int id) {
+        return courseRepository.findById(id);
+    }
+
     public Course addCourse(Course course) {
         return courseRepository.save(course);
+    }
+
+    public Course updateCourse(int id, Course updated) {
+        updated.setId(id);
+        return courseRepository.save(updated);
+    }
+
+    public void deleteCourse(int id) {
+        courseRepository.deleteById(id);
     }
 }
